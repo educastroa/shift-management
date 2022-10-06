@@ -1,28 +1,47 @@
-import { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 
-interface User {
-  first_name: string;
-  last_name: string;
+interface Inputs {
+  email: string;
+  password: string;
 }
 
-enum ShiftTypes {
-  DAY = "day",
-  AFTERNOON = "afternoon",
-  NIGHT = "night",
-}
-
-type Shift = {
-  date: Date;
-  type: `${ShiftTypes}`;
-};
 
 function Login() {
-  const [user, setUser] = useState<Array<User>>([]);
-  const [shift, setShift] = useState<Shift[]>([]);
+  const [inputs, setInputs] = useState<Array<Inputs>>([]);
+  // const [shift, setShift] = useState<Shift[]>([]);
+
+const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const name = (event.target as HTMLInputElement).name;
+  const value = (event.target as HTMLInputElement).value; 
+  setInputs(values => ({...values, [name]: value}))
+}
+
 
   return (
     <div>
-      {user.length > 0 && user.map((item) => <h1>{item.first_name}</h1>)}
+      <form className="login-form">
+        <label htmlFor="email">Email</label>
+
+        <input
+          type="email"
+          placeholder="Email"
+          name="email"
+          required
+          onChange={handleChange}
+        />
+
+        <label htmlFor="password">Password</label>
+
+        <input
+          type="password"
+          placeholder="Password"
+          name="password"
+          required
+          onChange={handleChange}
+        />
+
+        <button type="submit">Login</button>
+      </form>
     </div>
   );
 }
