@@ -1,0 +1,38 @@
+
+
+.loginContainer {
+  height: 100vh;
+  background-color: darkgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-family: "Montserrat", sans-serif;
+}
+
+.formInput {
+  padding: 1em 0;
+}
+
+form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+input {
+  border-radius: 10px;
+  border: none;
+  background-color: #eee;
+  padding: 12px 15px;
+}
+
+button {
+  border-radius: 30px;
+  width: 50%;
+}
+
+img {
+  height: 15em;
+}
