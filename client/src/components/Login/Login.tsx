@@ -1,6 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
 import styles from "./Login.module.scss";
-import logo from "../../assets/javascript-logo.png"
 import logo1 from "../../assets/company-logo.jpg"
 
 
@@ -16,8 +15,6 @@ function Login() {
     const { name, value } = event.target as HTMLInputElement;
     setInputs({ ...inputs, [name]: value });
   };
-
-  
 
   return (
     <div className={styles.loginContainer}>
