@@ -31,11 +31,10 @@ const runDbReset = async () => {
   try {
     dbParams.host &&
       console.log(`Connecting to PG on ${dbParams.host} as ${dbParams.user}`);
-    dbParams.connectionString &&
-      console.log(`Connecting to PG with ${dbParams.connectionString}...`);
     await db.connect();
     await runSchemas();
     await runSeeds();
+    console.log('completed');
     db.end();
   } catch (err) {
     console.error(`Failed due to error ${err}`);
