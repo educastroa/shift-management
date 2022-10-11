@@ -1,8 +1,9 @@
 require("dotenv").config();
 
 const express = require("express");
-const server = express();
+const app = express();
 const port = 8000;
+
 
 const { Pool } = require("pg");
 const dbParams = require("./lib/db");
@@ -13,10 +14,13 @@ db.connect()
   })
   .catch((err) => console.log(`This error occured while trying to connect to db: ${err}`));
 
+app.use(express.urlencoded({ extended: true }));  
+app.use(express.json())
+
 const loginRoute = require("./routes/login");
 
-server.use("/api/login", loginRoute(db));
+app.use("/api/login", loginRoute(db));
 
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`Server running at port:${port}`);
 });

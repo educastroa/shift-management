@@ -16,8 +16,9 @@ function Login() {
     setInputs({ ...inputs, [name]: value });
   };
 
-  const handleSubmit = () => {
-    axios.get("/api/login").then((data) => console.log(data));
+  const handleSubmit = (event: React.SyntheticEvent) => {
+    event.preventDefault()
+    axios.post("/api/login", inputs);
   };
 
   return (
