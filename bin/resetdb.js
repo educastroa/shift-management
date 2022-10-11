@@ -28,7 +28,8 @@ const runSeeds = async () => {
 };
 
 const runDbReset = async () => {
-  try {
+  try {const db = new Client(dbParams);
+
     dbParams.host &&
       console.log(`Connecting to PG on ${dbParams.host} as ${dbParams.user}`);
     await db.connect();

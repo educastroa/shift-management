@@ -1,4 +1,4 @@
-require('dotenv').config
+require("dotenv").config;
 
 const express = require("express");
 const server = express();
@@ -12,6 +12,10 @@ db.connect()
     console.log(`Connect to ${dbParams.database} database`);
   })
   .catch(() => console.log("Error while connecting the DB"));
+
+
+
+
 
 server.listen(port, () => {
   console.log(`Server running at port:${port}`);
