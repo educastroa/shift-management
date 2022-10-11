@@ -28,14 +28,13 @@ const runSeeds = async () => {
 };
 
 const runDbReset = async () => {
-  try {const db = new Client(dbParams);
-
+  try {
     dbParams.host &&
       console.log(`Connecting to PG on ${dbParams.host} as ${dbParams.user}`);
     await db.connect();
     await runSchemas();
     await runSeeds();
-    console.log('completed');
+    console.log("completed");
     db.end();
   } catch (err) {
     console.error(`Failed due to error ${err}`);

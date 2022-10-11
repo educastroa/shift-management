@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from "react";
+import axios from "axios";
 import styles from "./Login.module.scss";
-import logo1 from "../../assets/company-logo.jpg"
-
+import logo1 from "../../assets/company-logo.jpg";
 
 interface Inputs {
   email?: string;
@@ -16,13 +16,17 @@ function Login() {
     setInputs({ ...inputs, [name]: value });
   };
 
+  const handleSubmit = () => {
+    axios.get("/api/login").then((data) => console.log(data));
+  };
+
   return (
     <div className={styles.loginContainer}>
       <div>
-        <div >
-        <img src={logo1} alt='logo'/>
+        <div>
+          <img src={logo1} alt="logo" />
         </div>
-        <form >
+        <form onSubmit={handleSubmit}>
           <div className={styles.formInput}>
             <input
               type="email"

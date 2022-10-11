@@ -1,4 +1,4 @@
-require("dotenv").config;
+require("dotenv").config();
 
 const express = require("express");
 const server = express();
@@ -11,11 +11,11 @@ db.connect()
   .then(() => {
     console.log(`Connect to ${dbParams.database} database`);
   })
-  .catch(() => console.log("Error while connecting the DB"));
+  .catch((err) => console.log(`This error occured while trying to connect to db: ${err}`));
 
+const loginRoute = require("./routes/login");
 
-
-
+server.use("/api/login", loginRoute(db));
 
 server.listen(port, () => {
   console.log(`Server running at port:${port}`);
