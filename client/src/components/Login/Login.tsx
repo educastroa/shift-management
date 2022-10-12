@@ -1,4 +1,5 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useContext } from "react";
+import { UserContext } from "../../context";
 import axios from "axios";
 import styles from "./Login.module.scss";
 import logo1 from "../../assets/company-logo.jpg";
@@ -10,15 +11,20 @@ interface Inputs {
 
 function Login() {
   const [inputs, setInputs] = useState<Inputs>();
+  const userContext = useContext(UserContext)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target as HTMLInputElement;
     setInputs({ ...inputs, [name]: value });
   };
 
+
   const handleSubmit = (event: React.SyntheticEvent) => {
-    event.preventDefault()
-    axios.post("/api/login", inputs);
+    event.preventDefault();
+    axios.post("/api/login", inputs).then((res) => {
+      const email = res.data.email
+      userContext.setUser({email})
+    });
   };
 
   return (

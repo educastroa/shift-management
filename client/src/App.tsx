@@ -1,8 +1,13 @@
 import Login from "./components/Login/Login";
-import logo from "./assets/javascript-logo.png";
+import { UserContextProvider } from "./context";
 
 function App() {
-  return <Login />;
+  return (
+    <UserContextProvider>
+      <Login />
+    </UserContextProvider>
+    
+  )
 }
 
 export default App;
