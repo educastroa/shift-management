@@ -3,6 +3,7 @@ import { UserContext } from "../../context";
 import axios from "axios";
 import styles from "./Login.module.scss";
 import logo1 from "../../assets/company-logo.jpg";
+import { useNavigate } from "react-router-dom"
 
 interface Inputs {
   email?: string;
@@ -12,6 +13,7 @@ interface Inputs {
 function Login() {
   const [inputs, setInputs] = useState<Inputs>();
   const userContext = useContext(UserContext)
+  const navigate = useNavigate()
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target as HTMLInputElement;
@@ -25,6 +27,7 @@ function Login() {
       const email = res.data.email
       userContext.setUser({email})
     });
+    navigate("/shiftnotes", { replace:true })
   };
 
   return (
