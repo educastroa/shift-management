@@ -1,9 +1,9 @@
-import React, { useState, ChangeEvent, useContext } from "react";
+import React, { useState, ChangeEvent, useContext, useEffect } from "react";
 import { UserContext } from "../../context";
 import axios from "axios";
 import styles from "./Login.module.scss";
 import logo1 from "../../assets/company-logo.jpg";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 interface Inputs {
   email?: string;
@@ -12,23 +12,34 @@ interface Inputs {
 
 function Login() {
   const [inputs, setInputs] = useState<Inputs>();
-  const userContext = useContext(UserContext)
-  const navigate = useNavigate()
+  const userContext = useContext(UserContext);
+  const navigate = useNavigate();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target as HTMLInputElement;
     setInputs({ ...inputs, [name]: value });
   };
 
-
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
     axios.post("/api/login", inputs).then((res) => {
-      const email = res.data.email
-      userContext.setUser({email})
+      const email = res.data.email;
+      userContext.setUser({ email });
     });
-    navigate("/shiftnotes", { replace:true })
+    navigate("/shiftnotes", { replace: true });
   };
+
+  useEffect(() => {
+    axios.get("api/login/me")
+    .then(res => {
+      const email = res.data.email;
+      userContext.setUser({ email });
+    })
+    .catch(err => {
+      console.log(err);
+      
+    })
+  }, []);
 
   return (
     <div className={styles.loginContainer}>
