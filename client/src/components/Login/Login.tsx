@@ -29,18 +29,6 @@ function Login() {
     navigate("/shiftnotes", { replace: true });
   };
 
-  useEffect(() => {
-    axios.get("api/login/me")
-    .then(res => {
-      const email = res.data.email;
-      userContext.setUser({ email });
-    })
-    .catch(err => {
-      console.log(err);
-      
-    })
-  }, []);
-
   return (
     <div className={styles.loginContainer}>
       <div>
