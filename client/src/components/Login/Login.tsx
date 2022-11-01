@@ -23,8 +23,9 @@ function Login() {
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
     axios.post("/api/login", inputs).then((res) => {
+      const id = res.data.id;
       const email = res.data.email;
-      userContext.setUser({ email });
+      userContext.setUser({ id, email });
     });
     navigate("/shiftnotes", { replace: true });
   };
@@ -54,7 +55,7 @@ function Login() {
               onChange={handleChange}
             />
           </div>
-          <button type="submit">Login</button>
+          <button className={styles.loginButton} type="submit">Login</button>
         </form>
       </div>
     </div>

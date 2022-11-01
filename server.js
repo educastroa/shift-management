@@ -27,8 +27,10 @@ app.use(
   })
 );
 const loginRoute = require("./routes/login");
+const shiftNoutesRoute = require("./routes/shiftnotes");
 
 app.use("/api/login", loginRoute(db));
+app.use("/api/shiftnotes", shiftNoutesRoute(db));
 
 app.listen(port, () => {
   console.log(`Server running at port:${port}`);

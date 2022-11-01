@@ -1,9 +1,61 @@
+import { prev } from "cheerio/lib/api/traversing";
+import { type } from "os";
+import { useState, ChangeEvent, useContext } from "react";
+import styles from "./ShiftNotes.module.scss";
+import axios from "axios";
+import { UserContext } from "../../context";
 
+interface Payload {
+  user_id: number;
+  notes?: string;
+}
 
+function ShiftNotes() {
+  const [inputField, setInputField] = useState(false);
+  const [payload, setPayload] = useState<Payload>();
+  const [savedNotes, setSavedNotes] = useState([]);
 
-function ShiftNotes () {
+  const userContext = useContext(UserContext);
 
-  return (<h1>Hello</h1>)
+  const addInput = () => {
+    setInputField(true);
+  };
+
+  const getNotes = () => {
+    axios.get("/api/shiftnotes/saved").then((res) => {
+      setSavedNotes(res.data);
+    });
+  };
+
+  const saveNote = (event: React.SyntheticEvent) => {
+    event.preventDefault();
+    axios.post("/api/shiftnotes", payload);
+  };
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target as HTMLInputElement;
+    setPayload({
+      user_id: userContext.user.id,
+      notes: value,
+    });
+  };
+
+  return (
+    <section className={styles.shiftnotesContainer}>
+      <h1>Enter your shift notes</h1>
+      <button onClick={addInput}>+</button>
+      {inputField ? (
+        <form onSubmit={saveNote}>
+          <input type="text" name="notes" onChange={handleChange}></input>
+          <button type="submit">Save</button>
+          <button>Delete</button>
+        </form>
+      ) : (
+        ""
+      )}
+      {savedNotes.length > 0 && savedNotes.map((note) => <p>{note}</p>)}
+    </section>
+  );
 }
 
 export default ShiftNotes;

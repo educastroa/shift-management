@@ -2,6 +2,7 @@ import { type } from "@testing-library/user-event/dist/type";
 import React, { useState, createContext } from "react";
 
 export type Authuser = {
+  id: number;
   email: String;
 };
 

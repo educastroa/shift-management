@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS shiftnotes CASCADE;
+
+CREATE TABLE shiftnotes (
+  id SERIAL PRIMARY KEY NOT NULL,
+  user_id INTEGER REFERENCES users(id) NOT NULL,
+  notes VARCHAR(10000) NOT NULL,
+  date_created TIMESTAMP
+)

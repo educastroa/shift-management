@@ -4,7 +4,6 @@ const router = express.Router();
 module.exports = (db) => {
   router.post("/", (req, res) => {
     const { email, password } = req.body;
-    console.log("test", email);
     db.query(`SELECT * FROM users WHERE email = $1`, [email])
       .then((data) => {
         const user = data.rows[0];

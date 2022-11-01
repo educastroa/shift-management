@@ -14,8 +14,9 @@ function App() {
     axios
       .get("api/login/me")
       .then((res) => {
+        const id = res.data.id;
         const email = res.data.email;
-        userContext.setUser({ email });
+        userContext.setUser({ id, email });
       })
       .catch((err) => {
         console.log(err);
