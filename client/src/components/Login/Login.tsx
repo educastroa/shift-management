@@ -12,7 +12,7 @@ interface Inputs {
 
 function Login() {
   const [inputs, setInputs] = useState<Inputs>();
-  const userContext = useContext(UserContext);
+  const { setIsLoggedIn, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -22,16 +22,7 @@ function Login() {
 
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    axios.post("/api/login", inputs)
-    .then((res) => {
-      const id = res.data.id;
-      const email = res.data.email;
-      userContext.setUser({ id, email })
-      userContext.setUserState(true);
-      navigate("/shiftnotes", { replace: true });
-    })
-    .catch((err) => {console.log(err);
-    });
+    
   };
 
   return (

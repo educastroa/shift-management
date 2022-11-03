@@ -6,7 +6,6 @@ const app = express();
 const port = 8000;
 
 const { Pool } = require("pg");
-const { cookie } = require("request");
 const dbParams = require("./lib/db");
 const db = new Pool(dbParams);
 db.connect()

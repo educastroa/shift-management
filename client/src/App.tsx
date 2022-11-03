@@ -2,31 +2,35 @@ import Login from "./components/Login/Login";
 import ShiftNotes from "./components/ShiftNotes/ShiftNotes";
 import { Routes, Route } from "react-router-dom";
 import { useEffect, useContext } from "react";
-import axios from "axios";
 import { useNavigate, Navigate } from "react-router-dom";
 import { UserContext } from "./context";
+import axios from "axios";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 function App() {
-  const userContext = useContext(UserContext);
+  const { setIsLoggedIn, setUser } = useContext(UserContext);
 
   useEffect(() => {
-    axios
+    const checkUser = async () => await axios
       .get("api/login/me")
       .then((res) => {
         const id = res.data.id;
         const email = res.data.email;
-        userContext.setUser({ id, email });
-        userContext.setUserState(true);
+        setUser({ id, email });
+        setIsLoggedIn(true);
       })
       .catch((err) => {
         console.log(err);
+        setIsLoggedIn(false);
       });
+    checkUser()
   }, []);
+
 
   return (
     <Routes>
-      <Route path="/shiftnotes" element={userContext.userState ? <ShiftNotes /> : <Navigate to="/" />} />
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<ProtectedRoute><Login /></ProtectedRoute>} />
+      <Route path="/shiftnotes" element={<ProtectedRoute><ShiftNotes /></ProtectedRoute>} />
     </Routes>
   );
 }

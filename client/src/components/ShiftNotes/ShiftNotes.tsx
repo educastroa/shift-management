@@ -1,5 +1,3 @@
-import { prev } from "cheerio/lib/api/traversing";
-import { type } from "os";
 import { useState, ChangeEvent, useContext } from "react";
 import styles from "./ShiftNotes.module.scss";
 import axios from "axios";
