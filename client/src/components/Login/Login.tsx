@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useContext, useEffect } from "react";
+import React, { useState, ChangeEvent, useContext } from "react";
 import { UserContext } from "../../context";
 import axios from "axios";
 import styles from "./Login.module.scss";
@@ -22,12 +22,16 @@ function Login() {
 
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    axios.post("/api/login", inputs).then((res) => {
+    axios.post("/api/login", inputs)
+    .then((res) => {
       const id = res.data.id;
       const email = res.data.email;
-      userContext.setUser({ id, email });
+      userContext.setUser({ id, email })
+      userContext.setUserState(true);
+      navigate("/shiftnotes", { replace: true });
+    })
+    .catch((err) => {console.log(err);
     });
-    navigate("/shiftnotes", { replace: true });
   };
 
   return (

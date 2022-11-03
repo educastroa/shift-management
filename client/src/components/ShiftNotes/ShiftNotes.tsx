@@ -6,7 +6,7 @@ import axios from "axios";
 import { UserContext } from "../../context";
 
 interface Payload {
-  user_id: number;
+  user_id?: number;
   notes?: string;
 }
 
@@ -29,7 +29,8 @@ function ShiftNotes() {
 
   const saveNote = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    axios.post("/api/shiftnotes", payload);
+    axios.post("/api/shiftnotes", payload)
+    // .then(event.target.reset());
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +43,10 @@ function ShiftNotes() {
 
   return (
     <section className={styles.shiftnotesContainer}>
+      <div>
       <h1>Enter your shift notes</h1>
+      <h3>logged in as {userContext.user.email}</h3>
+      </div>
       <button onClick={addInput}>+</button>
       {inputField ? (
         <form onSubmit={saveNote}>

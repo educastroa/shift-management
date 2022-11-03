@@ -23,17 +23,18 @@ module.exports = (db) => {
   router.get("/me", (req, res) => {
     const user_id = req.session.user_id;
     db.query(`SELECT * FROM users WHERE id = $1`, [user_id])
-    .then((data) => {
-      const user = data.rows[0]
+      .then((data) => {
+        const user = data.rows[0];
 
-      if (!user) {
-        return res.status(400).send({message: "user not found on database"})
-      }
+        if (!user) {
+          return res
+            .status(400)
+            .send({ message: "user not found on database" });
+        }
 
-      return res.status(200).send({...user})
-    })
-    .catch(err => 
-      res.status(500).send({error: err.message}))
+        return res.status(200).send({ ...user });
+      })
+      .catch((err) => res.status(500).send({ error: err.message }));
   });
 
   return router;

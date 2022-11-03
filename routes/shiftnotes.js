@@ -5,7 +5,8 @@ const router = express.Router();
 module.exports = (db) => {
   router.post("/", (req, res) => {
     const { user_id, notes } = req.body;
-    console.log(user_id, notes);
+    console.log(user_id);
+    console.log(notes);
     const date = new Date();
     db.query(
       `INSERT INTO shiftnotes
