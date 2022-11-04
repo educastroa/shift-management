@@ -25,10 +25,10 @@ app.use(
     maxAge: 24 * 60 * 60 * 1000,
   })
 );
-const loginRoute = require("./routes/login");
+const authRoute = require("./routes/auth");
 const shiftNoutesRoute = require("./routes/shiftnotes");
 
-app.use("/api/login", loginRoute(db));
+app.use("/api/auth", authRoute(db));
 app.use("/api/shiftnotes", shiftNoutesRoute(db));
 
 app.listen(port, () => {

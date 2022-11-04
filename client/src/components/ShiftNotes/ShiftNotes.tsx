@@ -1,19 +1,18 @@
-import { useState, ChangeEvent, useContext } from "react";
+import { useState, ChangeEvent } from "react";
 import styles from "./ShiftNotes.module.scss";
 import axios from "axios";
-import { UserContext } from "../../context";
+import { useAuth } from "../../auth";
 
 interface Payload {
   user_id?: number;
   notes?: string;
 }
 
-function ShiftNotes() {
+const ShiftNotes = () => {
   const [inputField, setInputField] = useState(false);
   const [payload, setPayload] = useState<Payload>();
   const [savedNotes, setSavedNotes] = useState([]);
-
-  const userContext = useContext(UserContext);
+  const { logout, user } = useAuth();
 
   const addInput = () => {
     setInputField(true);
@@ -34,7 +33,7 @@ function ShiftNotes() {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target as HTMLInputElement;
     setPayload({
-      user_id: userContext.user.id,
+      user_id: user?.id,
       notes: value,
     });
   };
@@ -43,19 +42,20 @@ function ShiftNotes() {
     <section className={styles.shiftnotesContainer}>
       <div>
       <h1>Enter your shift notes</h1>
-      <h3>logged in as {userContext.user.email}</h3>
+      <h3>logged in as {user?.email}</h3>
       </div>
       <button onClick={addInput}>+</button>
-      {inputField ? (
+      {inputField && (
         <form onSubmit={saveNote}>
           <input type="text" name="notes" onChange={handleChange}></input>
           <button type="submit">Save</button>
           <button>Delete</button>
         </form>
-      ) : (
-        ""
       )}
+
       {savedNotes.length > 0 && savedNotes.map((note) => <p>{note}</p>)}
+      <br/>
+      <button type="button" onClick={logout}>Logout</button>
     </section>
   );
 }

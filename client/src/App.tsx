@@ -1,37 +1,28 @@
+import { Fragment, useEffect } from "react";
+import { Navigate, Routes, Route } from "react-router-dom";
+
 import Login from "./components/Login/Login";
 import ShiftNotes from "./components/ShiftNotes/ShiftNotes";
-import { Routes, Route } from "react-router-dom";
-import { useEffect, useContext } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
-import { UserContext } from "./context";
-import axios from "axios";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import { useAuth } from "./auth";
 
-function App() {
-  const { setIsLoggedIn, setUser } = useContext(UserContext);
+const App = () => {
+  const { checkLogin, isChecked } = useAuth();
 
   useEffect(() => {
-    const checkUser = async () => await axios
-      .get("api/login/me")
-      .then((res) => {
-        const id = res.data.id;
-        const email = res.data.email;
-        setUser({ id, email });
-        setIsLoggedIn(true);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoggedIn(false);
-      });
-    checkUser()
-  }, []);
-
+    checkLogin();
+  }, [checkLogin]);
 
   return (
-    <Routes>
-      <Route path="/" element={<ProtectedRoute><Login /></ProtectedRoute>} />
-      <Route path="/shiftnotes" element={<ProtectedRoute><ShiftNotes /></ProtectedRoute>} />
-    </Routes>
+    <Fragment>
+      {isChecked && (
+        <Routes>
+          <Route path="/shiftnotes" element={<ProtectedRoute><ShiftNotes /></ProtectedRoute>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<Navigate to="/shiftnotes" replace />} />
+        </Routes>
+      )}
+    </Fragment>
   );
 }
 

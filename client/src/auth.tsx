@@ -1,76 +1,82 @@
-import React, { ReactNode, useState, useEffect, useContext, createContext } from "react";
+import { ReactNode, useState, useContext, createContext } from "react";
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from "axios";
 
+import type { Credentials, User } from "./types";
+
 type AuthContextType = {
-    user: {
-        id: number;
-        email: String;
-    };
-    isLoggedIn: boolean;
+  checkLogin: () => void;
+  isChecked: boolean;
+  login: (credentials: Credentials) => void,
+  logout: () => void,
+  user: User | null;
 };
 
 const initialContextValue = {
-    user: {
-        id: 0,
-        email: '',
-    },
-    isLoggedIn: false,
+  checkLogin: () => { /* noop */ },
+  isChecked: false,
+  login: (credentials: Credentials) => { /* noop */ },
+  logout: () => { /* noop */ },
+  user: null,
 };
 
-const authContext = createContext<AuthContextType>(initialContextValue);
+const AuthContext = createContext<AuthContextType>(initialContextValue);
 
-export const ProvideAuth = ({ children }: { children: ReactNode }) => {
+export function ProvideAuth({ children }: { children: ReactNode }) {
   const auth = useProvideAuth();
-  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => {
-  return useContext(authContext);
+  return useContext(AuthContext);
 };
 
 const useProvideAuth = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(initialContextValue.isLoggedIn);
-  const [user, setUser] = useState(initialContextValue.user);
+  const [isChecked, setIsChecked] = useState<AuthContextType['isChecked']>(initialContextValue.isChecked);
+  const [user, setUser] = useState<AuthContextType['user']>(initialContextValue.user);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const login = (input: { email: string; password: string }) => {
-    return axios.post("/api/login", input)
+  const checkLogin = () => axios.get("api/auth/me")
     .then((res) => {
-      const id = res.data.id;
-      const email = res.data.email;
-      setUser({ id, email })
-      setIsLoggedIn(true);
+        const { id, email } = res.data;
+        const redirectionPath = location.pathname !== '/login' ? location.pathname : '/';
+        
+        setUser({ id, email });
+        localStorage.setItem("user", JSON.stringify({ id, email }));
+
+        navigate(redirectionPath);
     })
-  };
+    .catch((err) => {
+        setUser(initialContextValue.user);
+        localStorage.clear();
+    })
+    .finally(() => setIsChecked(true));
 
-//   const signout = () => {
-//     setLoading(true);
-//     return firebase
-//       .auth()
-//       .signOut()
-//       .then(() => {
-//         setUser(false);
-//       })
-//       .finally(() => setLoading(false));
-//   };
+  const login = (credentials: Credentials) => axios.post("/api/auth/login", credentials)
+    .then((res) => {
+      const { id, email } = res.data;
+      setUser({ id, email })
+      navigate('/');
+    })
+    .catch((err) => {
+      setUser(initialContextValue.user);
+      localStorage.clear();
+    })
+    .finally(() => setIsChecked(true));
 
-  useEffect(() => {
-    const checkUser = async () => await axios.get("api/login/me")
-        .then((res) => {
-            setUser(res.data);
-            setIsLoggedIn(true);
-        })
-        .catch((err) => {
-            setUser(initialContextValue.user);
-            setIsLoggedIn(false);
-        });
-
-
-    checkUser();
-  }, []);
+  const logout = () => axios.delete("/api/auth/logout")
+    .then((res) => {
+      setUser(initialContextValue.user);
+      localStorage.clear();
+      navigate('/');
+    });
 
   return {
-    user,
+    checkLogin,
+    isChecked,
     login,
-    // signout
+    logout,
+    user,
   };
 }
