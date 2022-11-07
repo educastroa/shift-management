@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (db) => {
-  router.post("/", (req, res) => {
+  router.post("/login", (req, res) => {
     const { email, password } = req.body;
     db.query(`SELECT * FROM users WHERE email = $1`, [email])
       .then((data) => {
@@ -18,6 +18,15 @@ module.exports = (db) => {
         return res.status(200).send({ ...user });
       })
       .catch((err) => res.status(500).send({ err }));
+  });
+
+  router.delete("/logout", (req, res) => {
+    try {
+      req.session = null;
+      return res.status(200).send({ message: "Logout successful" });
+    } catch (err) {
+      return res.status(500).send({ err });
+    }
   });
 
   router.get("/me", (req, res) => {
