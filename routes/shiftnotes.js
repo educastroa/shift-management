@@ -22,8 +22,8 @@ module.exports = (db) => {
   router.get("/currentnotes", (req, res) => {
     const user_id = req.session.user_id;
     const date = new Date();
-    date.setHours(date.getHours() - 8)
-    
+    date.setHours(date.getHours() - 8);
+
     db.query(
       `SELECT * FROM shiftnotes WHERE user_id = $1 AND date_created > $2;`,
       [user_id, date]
@@ -36,8 +36,20 @@ module.exports = (db) => {
       });
   });
 
+  router.delete("/deletenote/:id", (req, res) => {
+    const id  = req.params.id;
 
+    db.query(
+      `DELETE FROM shiftnotes WHERE id = $1;`,
+      [id]
+    )
+      .then(() => {
+        return res.status(200).send({message:"Delete successful"});
+      })
+      .catch((err) => {
+        return res.status(500).send({ err });
+      });
+  });
 
-  return router
+  return router;
 };
-

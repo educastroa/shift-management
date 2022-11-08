@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import styles from "./ShiftNotes.module.scss";
 import axios from "axios";
 import { useAuth } from "../../auth";
@@ -18,15 +18,17 @@ const ShiftNotes = () => {
     setInputField(true);
   };
 
-    
-
   const saveNote = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    axios.post("/api/shiftnotes", payload)
+    axios.post("/api/shiftnotes", payload);
     axios.get("/api/shiftnotes/currentnotes").then((res) => {
       setSavedNotes(res.data);
     });
     // .then(event.target.reset());
+  };
+
+  const handleDelete = (id: number) => {
+    axios.delete("api/shiftnotes/deletenote/" + id);
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -37,26 +39,39 @@ const ShiftNotes = () => {
     });
   };
 
+  useEffect(() => {
+    axios.get("/api/shiftnotes/currentnotes").then((res) => {
+      setSavedNotes(res.data);
+    });
+  }, []);
+
   return (
     <section className={styles.shiftnotesContainer}>
       <div>
-      <h1>Enter your shift notes</h1>
-      <h3>logged in as {user?.email}</h3>
+        <h1>Enter your shift notes</h1>
+        <h3>logged in as {user?.email}</h3>
       </div>
       <button onClick={addInput}>+</button>
       {inputField && (
         <form onSubmit={saveNote}>
           <input type="text" name="notes" onChange={handleChange}></input>
           <button type="submit">Save</button>
-          <button>Delete</button>
         </form>
       )}
 
-      {savedNotes.length > 0 && savedNotes.map((note) => <p>{JSON.stringify(note)}</p>)}
-      <br/>
-      <button type="button" onClick={logout}>Logout</button>
+      {savedNotes.length > 0 &&
+        savedNotes.map((note) => (
+          <div>
+            <p>{JSON.stringify(note)}</p>
+            <button onClick={() => handleDelete(note.id)}>Delete</button>
+          </div>
+        ))}
+      <br />
+      <button type="button" onClick={logout}>
+        Logout
+      </button>
     </section>
   );
-}
+};
 
 export default ShiftNotes;
