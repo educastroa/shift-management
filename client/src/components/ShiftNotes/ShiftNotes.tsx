@@ -1,42 +1,32 @@
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useEffect, FormEventHandler } from "react";
 import styles from "./ShiftNotes.module.scss";
 import axios from "axios";
 import { useAuth } from "../../auth";
-
-interface Payload {
-  user_id?: number;
-  notes?: string;
-}
+import type { ShiftNotes as ShiftNotesType } from "../../types";
 
 const ShiftNotes = () => {
   const [inputField, setInputField] = useState(false);
-  const [payload, setPayload] = useState<Payload>();
-  const [savedNotes, setSavedNotes] = useState([]);
+  const [savedNotes, setSavedNotes] = useState<ShiftNotesType[]>([]);
   const { logout, user } = useAuth();
 
   const addInput = () => {
     setInputField(true);
   };
 
-  const saveNote = (event: React.SyntheticEvent) => {
+  const saveNote = async (event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
-    axios.post("/api/shiftnotes", payload);
-    axios.get("/api/shiftnotes/currentnotes").then((res) => {
-      setSavedNotes(res.data);
-    });
-    // .then(event.target.reset());
-  };
-
-  const handleDelete = (id: number) => {
-    axios.delete("api/shiftnotes/deletenote/" + id);
-  };
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target as HTMLInputElement;
-    setPayload({
+   const res =  await axios.post("/api/shiftnotes", { 
       user_id: user?.id,
-      notes: value,
+      notes: event.target.notes.value,
     });
+    setSavedNotes([...savedNotes, res.data]);
+    event.target.reset();
+  };
+
+  const handleDelete = async (id: string) => {
+    await axios.delete(`api/shiftnotes/deletenote/${id}`);
+    const currentNotes = [...savedNotes].filter((note) => note.id !== id);
+    setSavedNotes(currentNotes);
   };
 
   useEffect(() => {
@@ -54,7 +44,7 @@ const ShiftNotes = () => {
       <button onClick={addInput}>+</button>
       {inputField && (
         <form onSubmit={saveNote}>
-          <input type="text" name="notes" onChange={handleChange}></input>
+          <input type="text" name="notes" required />
           <button type="submit">Save</button>
         </form>
       )}

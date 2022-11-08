@@ -7,16 +7,15 @@ module.exports = (db) => {
     const date = new Date();
     db.query(
       `INSERT INTO shiftnotes
-      (user_id, notes, date_created) VALUES ($1, $2, $3);
+      (user_id, notes, date_created) VALUES ($1, $2, $3) RETURNING id;
       `,
       [user_id, notes, date]
     )
-      .then((data) => {
-        return res.status(200).send();
-      })
-      .catch((err) => {
-        return res.status(500).send({ err });
-      });
+      .then((data) =>
+        db.query(`SELECT * FROM shiftnotes WHERE id = $1;`, [data.rows[0].id])
+      )
+      .then((data) => res.status(200).send({ ...data.rows[0] }))
+      .catch((err) => res.status(500).send({ err }));
   });
 
   router.get("/currentnotes", (req, res) => {
@@ -37,14 +36,11 @@ module.exports = (db) => {
   });
 
   router.delete("/deletenote/:id", (req, res) => {
-    const id  = req.params.id;
+    const id = req.params.id;
 
-    db.query(
-      `DELETE FROM shiftnotes WHERE id = $1;`,
-      [id]
-    )
+    db.query(`DELETE FROM shiftnotes WHERE id = $1;`, [id])
       .then(() => {
-        return res.status(200).send({message:"Delete successful"});
+        return res.status(200).send({ message: "Delete successful" });
       })
       .catch((err) => {
         return res.status(500).send({ err });
