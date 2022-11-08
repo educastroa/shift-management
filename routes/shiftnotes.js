@@ -1,12 +1,9 @@
 const express = require("express");
-const { DatabaseError } = require("pg");
 const router = express.Router();
 
 module.exports = (db) => {
   router.post("/", (req, res) => {
     const { user_id, notes } = req.body;
-    console.log(user_id);
-    console.log(notes);
     const date = new Date();
     db.query(
       `INSERT INTO shiftnotes
@@ -21,5 +18,26 @@ module.exports = (db) => {
         return res.status(500).send({ err });
       });
   });
+
+  router.get("/currentnotes", (req, res) => {
+    const user_id = req.session.user_id;
+    const date = new Date();
+    date.setHours(date.getHours() - 8)
+    
+    db.query(
+      `SELECT * FROM shiftnotes WHERE user_id = $1 AND date_created > $2;`,
+      [user_id, date]
+    )
+      .then((data) => {
+        return res.status(200).send(data.rows);
+      })
+      .catch((err) => {
+        return res.status(500).send({ err });
+      });
+  });
+
+
+
   return router
 };
+

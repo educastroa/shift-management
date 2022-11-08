@@ -18,15 +18,14 @@ const ShiftNotes = () => {
     setInputField(true);
   };
 
-  const getNotes = () => {
-    axios.get("/api/shiftnotes/saved").then((res) => {
-      setSavedNotes(res.data);
-    });
-  };
+    
 
   const saveNote = (event: React.SyntheticEvent) => {
     event.preventDefault();
     axios.post("/api/shiftnotes", payload)
+    axios.get("/api/shiftnotes/currentnotes").then((res) => {
+      setSavedNotes(res.data);
+    });
     // .then(event.target.reset());
   };
 
@@ -53,7 +52,7 @@ const ShiftNotes = () => {
         </form>
       )}
 
-      {savedNotes.length > 0 && savedNotes.map((note) => <p>{note}</p>)}
+      {savedNotes.length > 0 && savedNotes.map((note) => <p>{JSON.stringify(note)}</p>)}
       <br/>
       <button type="button" onClick={logout}>Logout</button>
     </section>
